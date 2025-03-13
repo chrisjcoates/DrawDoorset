@@ -55,6 +55,7 @@
                     name="fireRatingSelect"
                     id="fireRating"
                     onblur="drawDoorset()"
+                    onchange="drawDoorset()"
                   >
                     <option value="">Please select...</option>
                     <option value="NFR">NFR</option>
@@ -71,9 +72,10 @@
                     name="handingSelect"
                     id="handing"
                     onblur="drawDoorset()"
+                    onchange="drawDoorset()"
                   >
-                    <option value="NFR">Left Hand</option>
-                    <option value="FD30">Right Hand</option>
+                    <option value="LH">Left Hand</option>
+                    <option value="RH">Right Hand</option>
                   </select>
                 </div>
               </div>
@@ -93,6 +95,7 @@
                       placeholder="Door height"
                       id="door_height"
                       onblur="drawDoorset()"
+                      onchange="drawDoorset()"
                     />
                   </div>
                   <!-- Door Width -->
@@ -106,6 +109,7 @@
                       placeholder="Door width left"
                       id="door_width_left"
                       onblur="drawDoorset()"
+                      onchange="drawDoorset()"
                     />
                     <label class="form-label mb-3 w-100" for="door_width_right"
                       >Door Width Right</label
@@ -116,6 +120,7 @@
                       placeholder="Door width right"
                       id="door_width_right"
                       onblur="drawDoorset()"
+                      onchange="drawDoorset()"
                     />
                     <label class="form-label w-100" for="doorThickness"
                       >Door Thickness</label
@@ -124,6 +129,8 @@
                       class="form-control mb-3"
                       id="doorThickness"
                       name="doorThicknessValue"
+                      onblur="drawDoorset()"
+                      onchange="drawDoorset()"
                     >
                       <option value="">Please select...</option>
                       <option value="option1">44</option>
@@ -157,6 +164,7 @@
                       id="face_protection_height"
                       placeholder="Face Protection Height"
                       onblur="drawDoorset()"
+                      onchange="drawDoorset()"
                     />
                     <label class="form-label me-3" for="fullHeightProc"
                       >Full height</label
@@ -166,6 +174,7 @@
                       id="fullHeightProc"
                       value="full-height"
                       onclick="drawDoorset()"
+                      onchange="drawDoorset()"
                     />
                   </div>
                 </div>
@@ -182,6 +191,7 @@
                     placeholder="TM"
                     id="vp_tm"
                     onchange="drawDoorset()"
+                    onchange="drawDoorset()"
                   />
                   <label class="form-label" for="vp_sm">Side Margin</label>
                   <input
@@ -189,6 +199,7 @@
                     type="number"
                     placeholder="SM"
                     id="vp_sm"
+                    onchange="drawDoorset()"
                     onchange="drawDoorset()"
                   />
                   <label class="form-label" for="vp_aw">VP Width</label>
@@ -198,6 +209,7 @@
                     placeholder="AW"
                     id="vp_aw"
                     onchange="drawDoorset()"
+                    onchange="drawDoorset()"
                   />
                   <label class="form-label" for="vp_a1l">VP Length</label>
                   <input
@@ -205,6 +217,7 @@
                     type="number"
                     placeholder="A1L"
                     id="vp_a1l"
+                    onchange="drawDoorset()"
                     onchange="drawDoorset()"
                   />
                 </div>
