@@ -1,0 +1,49 @@
+.sidebar {
+  width: 150px;
+  height: 100vh; /* Full viewport height */
+  background-color: #f8f9fa;
+  padding-top: 1rem;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 1px solid #ddd;
+  overflow: hidden;
+}
+
+/* Content Area */
+.content-wrapper {
+  margin-left: 150px; /* Offset by sidebar width */
+  width: calc(100% - 150px);
+  height: 100vh; /* Full viewport height */
+  overflow: hidden; /* Prevents unnecessary scrolling */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure row and columns stretch fully */
+.full-height {
+  height: 100%;
+}
+
+#details-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#door-container {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+}
+#frame-container {
+  display: none;
+  flex-direction: column;
+}
+#face-protection-container {
+  display: none;
+  flex-direction: column;
+}
+#vision-panels-container {
+  display: none;
+  flex-direction: column;
+}
