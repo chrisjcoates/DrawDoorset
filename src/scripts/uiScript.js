@@ -5,6 +5,7 @@ function switchContainer(targetContainerID) {
     document.getElementById("frame-container").style.display = "none";
     document.getElementById("face-protection-container").style.display = "none";
     document.getElementById("vision-panels-container").style.display = "none";
+    document.getElementById("edge-protection-container").style.display = "none";
     document.getElementById(targetContainerID).style.display = "flex";
 
 }
