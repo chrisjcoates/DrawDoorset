@@ -28,6 +28,7 @@ function getDimensions() {
   const doorThickness = getInputValue("doorThickness");
   const faceProtectionHeight = getInputValue("face_protection_height");
   const fireRating = document.getElementById("fireRating").value;
+  const handing = document.getElementById("handing").value;
 
   // set hinge clearace based on door thickness
   let hingeClearance;
@@ -49,6 +50,7 @@ function getDimensions() {
     faceProcHeight: scaleValue(faceProtectionHeight),
     faceProcWidth: scaleValue(doorWidthLeft - AIR_GAP * 2),
     hingeClearance: scaleValue(hingeClearance),
+    handing: handing,
   };
 
   // Set value of bead offset based on fire rating
@@ -163,7 +165,7 @@ function drawVisionPanels(ctx, doorset, vp) {
   let rightDoorOffset = 0;
   let vpXPos;
 
-  if (doorset.doorWidthRight > 0) {
+  if (doorset.doorWidthRight > 0 || doorset.handing == "LH") {
     rightDoorOffset = doorset.doorWidthRight + doorset.airGap;
     vpXPos =
       X +
@@ -199,6 +201,7 @@ function drawFaceProtection(ctx, doorset, vp) {
   }
 
   // Set face protection position
+
   let faceXPos = X + doorset.frameThickness + doorset.airGap * 2;
   let faceYPos =
     Y +
@@ -233,10 +236,10 @@ function drawFaceProtection(ctx, doorset, vp) {
   );
   ctx.stroke();
   // top line
-  if (vp.vpTm + vp.vpA1l > faceProcFromTopofDoor) {
+  if (vp.vpTm + vp.vpA1l > faceProcFromTopofDoor && !document.getElementById("fullHeightProc").checked) {
     console.log("VP goes into face protection");
     // Handle Vision Panel collision with face protection
-    if (doorset.doorWidthRight > 0) {
+    if (doorset.doorWidthRight > 0 || doorset.handing == "LH") {
       // draw up to the vp
       ctx.beginPath();
       ctx.moveTo(
@@ -376,6 +379,20 @@ function drawFaceProtection(ctx, doorset, vp) {
     );
     ctx.lineTo(faceXPos, faceYPos);
     ctx.stroke();
+  }
+  // Draw the cutout around the vision panel
+  // Get vp position
+  let vpXPos;
+  if (doorset.doorWidthRight > 0 || doorset.handing == "LH") {
+    vpXPos = X + doorset.frameThickness + doorset.airGap + doorset.doorWidthLeft - vp.vpSm - vp.vpAw - vp.beadOffset;
+  } else {
+    vpXPos = X + doorset.frameThickness + doorset.airGap + vp.vpSm - vp.beadOffset;
+  }
+
+  let vpYPos = Y + doorset.frameThickness + doorset.airGap + vp.vpTm - vp.beadOffset;
+
+  if (document.getElementById("fullHeightProc").checked) {
+    ctx.strokeRect(vpXPos, vpYPos, vp.vpAw + (vp.beadOffset *2), vp.vpA1l + (vp.beadOffset *2));
   }
 }
 
