@@ -37,6 +37,12 @@
         >
           <a class="nav-link" href="#">Vision Panel</a>
         </li>
+        <li
+          class="nav-item"
+          onclick="switchContainer('edge-protection-container')"
+        >
+          <a class="nav-link" href="#">Edge Protection</a>
+        </li>
       </ul>
     </nav>
 
@@ -133,8 +139,8 @@
                       onchange="drawDoorset()"
                     >
                       <option value="">Please select...</option>
-                      <option value="option1">44</option>
-                      <option value="option2">54</option>
+                      <option value="44">44</option>
+                      <option value="54">54</option>
                     </select>
                   </div>
                 </div>
@@ -220,6 +226,22 @@
                     onchange="drawDoorset()"
                     onchange="drawDoorset()"
                   />
+                </div>
+              </div>
+            </div>
+            <!-- Edge Protection Container -->
+            <div class="container mt-3" id="edge-protection-container">
+              <div class="row">
+                <div class="col">
+                  <label class="form-label" for="edgeProcChecks"
+                    >Edge Protection</label
+                  >
+                  <div id="edgeProcChecks">
+                    <label for="hingeEdgeCheck">Hinge Edge</label>
+                    <input type="checkbox" id="hingeEdgeCheck" />
+                    <label for="lockEdgeCheck">Lock Edge</label>
+                    <input type="checkbox" id="lockEdgeCheck" />
+                  </div>
                 </div>
               </div>
             </div>
