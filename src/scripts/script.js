@@ -9,6 +9,7 @@ const X = 100;
 const Y = 100;
 const HINGE_CLEARANCE_44MM = 4;
 const HINGE_CLEARANCE_54MM = 5;
+const EDGE_PROTECTION_SIZE = 44;
 
 // Get input values as floats
 function getInputValue(id) {
@@ -32,7 +33,7 @@ function getDimensions() {
 
   // set hinge clearace based on door thickness
   let hingeClearance;
-  if (doorThickness == 44) {
+  if (document.getElementById("doorThickness").value == 44) {
     hingeClearance = HINGE_CLEARANCE_44MM;
   } else {
     hingeClearance = HINGE_CLEARANCE_54MM;
@@ -48,9 +49,10 @@ function getDimensions() {
     airGap: scaleValue(AIR_GAP),
     underFloorGap: scaleValue(UNDER_FLOOR_GAP),
     faceProcHeight: scaleValue(faceProtectionHeight),
-    faceProcWidth: scaleValue(doorWidthLeft - AIR_GAP * 2),
+    faceProcWidth: scaleValue(doorWidthLeft - AIR_GAP - hingeClearance),
     hingeClearance: scaleValue(hingeClearance),
     handing: handing,
+    egdeProtectionSize: scaleValue(EDGE_PROTECTION_SIZE),
   };
 
   // Set value of bead offset based on fire rating
@@ -187,22 +189,26 @@ function drawVisionPanels(ctx, doorset, vp) {
 
 // Draw face protection
 function drawFaceProtection(ctx, doorset, vp) {
-  // Set right door offset
-  let rightDoorOffset = 0;
-  if (doorset.doorWidthRight > 0) {
-    rightDoorOffset = doorset.doorWidthRight + doorset.airGap;
-  }
+
+  // Set the distant from the top of the door to the top of the face protection
   const faceProcFromTopofDoor = doorset.doorHeight - doorset.faceProcHeight;
 
   // Check if full height face protection is selected
+
   let fullHeightCheck = document.getElementById("fullHeightProc");
   if (fullHeightCheck.checked) {
-    doorset.faceProcHeight = doorset.doorHeight;
+    doorset.faceProcHeight = doorset.doorHeight; // if checked set face protection height to door height
   }
 
-  // Set face protection position
-
-  let faceXPos = X + doorset.frameThickness + doorset.airGap * 2;
+  // Set face protection positions in x & y
+  //X Pos
+  let faceXPos;
+  if (doorset.handing == "LH") {
+    faceXPos = X + doorset.frameThickness + doorset.airGap + doorset.hingeClearance;
+  } else {
+    faceXPos = X + doorset.frameThickness + (doorset.airGap * 2);
+  }
+  // Y Pos
   let faceYPos =
     Y +
     doorset.frameThickness +
@@ -210,7 +216,7 @@ function drawFaceProtection(ctx, doorset, vp) {
     doorset.doorHeight -
     doorset.faceProcHeight;
 
-  // Draw face protection lines
+  // Draw face protection lines around the door edges
   // left line
   ctx.beginPath();
   ctx.moveTo(faceXPos, faceYPos);
@@ -235,7 +241,9 @@ function drawFaceProtection(ctx, doorset, vp) {
     faceYPos + doorset.faceProcHeight - doorset.faceProcHeight
   );
   ctx.stroke();
-  // top line
+
+  // draw the top line of the face protection
+  // Check if the vp goes into the face protection
   if (vp.vpTm + vp.vpA1l > faceProcFromTopofDoor && !document.getElementById("fullHeightProc").checked) {
     console.log("VP goes into face protection");
     // Handle Vision Panel collision with face protection
@@ -297,6 +305,7 @@ function drawFaceProtection(ctx, doorset, vp) {
       ctx.lineTo(faceXPos + doorset.doorWidthLeft - vp.vpSm - vp.vpAw - vp.beadOffset - doorset.airGap, faceYPos);
       ctx.stroke();
     } else {
+
       // draw up to the vp
       ctx.beginPath();
       ctx.moveTo(
@@ -380,6 +389,7 @@ function drawFaceProtection(ctx, doorset, vp) {
     ctx.lineTo(faceXPos, faceYPos);
     ctx.stroke();
   }
+
   // Draw the cutout around the vision panel
   // Get vp position
   let vpXPos;
