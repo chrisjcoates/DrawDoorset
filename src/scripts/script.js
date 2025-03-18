@@ -23,13 +23,14 @@ function scaleValue(value) {
 
 // Get form values and scale
 function getDimensions() {
+  console.log("Getting dimensions");
   const doorWidthRight = getInputValue("door_width_right");
   const doorWidthLeft = getInputValue("door_width_left");
   const doorHeight = getInputValue("door_height");
   const doorThickness = getInputValue("doorThickness");
   const faceProtectionHeight = getInputValue("face_protection_height");
-  const fireRating = document.getElementById("fireRating").value;
-  const handing = document.getElementById("handing").value;
+  const fireRating = document.getElementById("fireRating");
+  const handingSelected = document.getElementById("handingSelection");
 
   // set hinge clearace based on door thickness
   let hingeClearance;
@@ -40,7 +41,8 @@ function getDimensions() {
   }
 
   const doorsetDimensions = {
-    fireRating: fireRating,
+    fireRating: fireRating.value,
+    handingSelected: handingSelected.value,
     doorWidthRight: scaleValue(doorWidthRight),
     doorWidthLeft: scaleValue(doorWidthLeft),
     doorHeight: scaleValue(doorHeight),
@@ -51,7 +53,6 @@ function getDimensions() {
     faceProcHeight: scaleValue(faceProtectionHeight),
     faceProcWidth: scaleValue(doorWidthLeft - AIR_GAP - hingeClearance),
     hingeClearance: scaleValue(hingeClearance),
-    handing: handing,
     egdeProtectionSize: scaleValue(EDGE_PROTECTION_SIZE),
   };
 
@@ -167,7 +168,7 @@ function drawVisionPanels(ctx, doorset, vp) {
   let rightDoorOffset = 0;
   let vpXPos;
 
-  if (doorset.doorWidthRight > 0 || doorset.handing == "LH") {
+  if (doorset.doorWidthRight > 0 || doorset.handingSelected == "LH") {
     rightDoorOffset = doorset.doorWidthRight + doorset.airGap;
     vpXPos =
       X +
@@ -187,6 +188,53 @@ function drawVisionPanels(ctx, doorset, vp) {
   }
 }
 
+// Draw face protection new
+function drawFaceProtectionNew(ctx, doorset, vp) {
+
+  // left door
+  // LH
+  let lockEdgeProct = (document.getElementById("lockEdgeCheck").checked) ? doorset.egdeProtectionSize : 0;
+  let hingeEdgeProct = (document.getElementById("hingeEdgeCheck").checked) ? doorset.egdeProtectionSize : 0;
+  let lockEdgeOverlap = (document.getElementById("lockEdgeCheck").checked) ? scaleValue(10): 0;
+  let hingeEdgeOverlap = (document.getElementById("hingeEdgeCheck").checked) ? scaleValue(10): 0;
+
+  let faceXPos = X + doorset.frameThickness + doorset.airGap + doorset.doorWidthLeft - lockEdgeProct + lockEdgeOverlap;
+  let faceYPos = Y + doorset.frameThickness + doorset.airGap + doorset.doorHeight - doorset.faceProcHeight;
+  
+  
+  let lockStile = vp.vpSm - lockEdgeProct + lockEdgeOverlap - vp.beadOffset;
+  let hingeStile = doorset.doorWidthLeft - vp.vpSm - vp.vpAw - hingeEdgeProct + hingeEdgeOverlap - vp.beadOffset;;
+
+  let vpLeftOverLength = doorset.faceProcHeight - (doorset.doorHeight - (vp.vpTm + vp.vpA1l));
+
+  // Draw face protection lines
+  drawLine(ctx, faceXPos, faceYPos, -lockStile, 0);
+  drawLine(ctx, 
+    faceXPos - lockStile, 
+    faceYPos, 
+    0, 
+    vpLeftOverLength + vp.beadOffset );
+  drawLine(ctx, 
+    faceXPos - lockStile, 
+    faceYPos + vpLeftOverLength + vp.beadOffset, 
+    - vp.vpAw - (vp.beadOffset * 2), 
+    0)
+
+  // RH
+
+
+  // right door
+
+
+}
+
+function drawLine(ctx, x, y, xLength, yLength) {
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + xLength, y + yLength);
+  ctx.stroke();
+}
+
 // Draw face protection
 function drawFaceProtection(ctx, doorset, vp) {
 
@@ -200,13 +248,25 @@ function drawFaceProtection(ctx, doorset, vp) {
     doorset.faceProcHeight = doorset.doorHeight; // if checked set face protection height to door height
   }
 
+  // Set offset for edge protection
+  let edgeProctOffset;
+  let edgeProctOffset2;
+  if (document.getElementById("lockEdgeCheck").checked) {
+    edgeProctOffset = doorset.egdeProtectionSize;
+    edgeProctOffset2 = 10
+  } else {
+    edgeProctOffset = 0;
+    edgeProctOffset2 = 0;
+  }
+  
+
   // Set face protection positions in x & y
   //X Pos
   let faceXPos;
   if (doorset.handing == "LH") {
-    faceXPos = X + doorset.frameThickness + doorset.airGap + doorset.hingeClearance;
+    faceXPos = X + doorset.frameThickness + doorset.airGap + doorset.hingeClearance - edgeProctOffset + scaleValue(edgeProctOffset2);
   } else {
-    faceXPos = X + doorset.frameThickness + (doorset.airGap * 2);
+    faceXPos = X + doorset.frameThickness + (doorset.airGap * 2) + edgeProctOffset - scaleValue(edgeProctOffset2);
   }
   // Y Pos
   let faceYPos =
@@ -247,7 +307,7 @@ function drawFaceProtection(ctx, doorset, vp) {
   if (vp.vpTm + vp.vpA1l > faceProcFromTopofDoor && !document.getElementById("fullHeightProc").checked) {
     console.log("VP goes into face protection");
     // Handle Vision Panel collision with face protection
-    if (doorset.doorWidthRight > 0 || doorset.handing == "LH") {
+    if (doorset.doorWidthRight > 0 || doorset.handingSelected == "LH") {
       // draw up to the vp
       ctx.beginPath();
       ctx.moveTo(
@@ -309,7 +369,7 @@ function drawFaceProtection(ctx, doorset, vp) {
       // draw up to the vp
       ctx.beginPath();
       ctx.moveTo(
-        faceXPos + doorset.faceProcWidth,
+        faceXPos + doorset.faceProcWidth - edgeProctOffset + edgeProctOffset2,
         faceYPos + doorset.faceProcHeight - doorset.faceProcHeight
       );
       ctx.lineTo(
@@ -406,6 +466,38 @@ function drawFaceProtection(ctx, doorset, vp) {
   }
 }
 
+function drawEdgeProtection(ctx, doorset, vp) {
+  let edgeProcX = X + doorset.frameThickness + doorset.airGap;
+  let edgeProcY = Y + doorset.frameThickness + doorset.airGap;
+
+  // Draw lock edge protection
+  if (document.getElementById("lockEdgeCheck").checked) {
+    if (doorset.handingSelected == "LH") {
+      ctx.strokeRect(edgeProcX + doorset.doorWidthLeft - doorset.egdeProtectionSize, edgeProcY, doorset.egdeProtectionSize, doorset.doorHeight);
+      // ctx.fillStyle = "RGB(210, 210, 210)";
+      // ctx.fillRect(edgeProcX + doorset.doorWidthLeft - doorset.egdeProtectionSize, edgeProcY, doorset.egdeProtectionSize, doorset.doorHeight);
+    } else {
+      ctx.strokeRect(edgeProcX, edgeProcY, doorset.egdeProtectionSize, doorset.doorHeight);
+      // ctx.fillStyle = "RGB(210, 210, 210)";
+      // ctx.fillRect(edgeProcX, edgeProcY, doorset.egdeProtectionSize, doorset.doorHeight);
+    }
+  } 
+
+  if (document.getElementById("hingeEdgeCheck").checked) {
+    if (doorset.handingSelected == "LH") {
+      ctx.strokeRect(edgeProcX, edgeProcY, doorset.egdeProtectionSize, doorset.doorHeight);
+      // ctx.fillStyle = "RGB(210, 210, 210)";
+      // ctx.fillRect(edgeProcX, edgeProcY, doorset.egdeProtectionSize, doorset.doorHeight);
+    } else {
+      ctx.strokeRect(edgeProcX + doorset.doorWidthLeft - doorset.egdeProtectionSize, edgeProcY, doorset.egdeProtectionSize, doorset.doorHeight);
+      // ctx.fillStyle = "RGB(210, 210, 210)";
+      // ctx.fillRect(edgeProcX + doorset.doorWidthLeft - doorset.egdeProtectionSize, edgeProcY, doorset.egdeProtectionSize, doorset.doorHeight);
+      
+    }
+  } 
+
+}
+
 // Draw the doorset
 function drawDoorset() {
   const { doorsetDimensions, vpDimensions } = getDimensions();
@@ -414,7 +506,14 @@ function drawDoorset() {
   drawFrame(canvasCtx, doorsetDimensions);
   drawDoor(canvasCtx, doorsetDimensions);
   drawVisionPanels(canvasCtx, doorsetDimensions, vpDimensions);
-  drawFaceProtection(canvasCtx, doorsetDimensions, vpDimensions);
+  drawFaceProtectionNew(canvasCtx, doorsetDimensions, vpDimensions);
+  drawEdgeProtection(canvasCtx, doorsetDimensions, vpDimensions);
+}
+
+function setFaceProtectionFullHeight() {
+  const protectionHeight = document.getElementById("face_protection_height")
+  protectionHeight.innerHTML = document.getElementById("door_height").value;
+  drawDoorset();
 }
 
 // Resize canvas for high-DPI screens
