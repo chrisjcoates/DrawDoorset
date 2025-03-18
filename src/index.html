@@ -72,11 +72,13 @@
               </div>
               <div class="row">
                 <div class="col">
-                  <label class="form-label" for="handing">Handing</label>
+                  <label class="form-label" for="handingSelection"
+                    >Handing</label
+                  >
                   <select
                     class="form-control"
-                    name="handingSelect"
-                    id="handing"
+                    name="handing"
+                    id="handingSelection"
                     onblur="drawDoorset()"
                     onchange="drawDoorset()"
                   >
@@ -238,9 +240,17 @@
                   >
                   <div id="edgeProcChecks">
                     <label for="hingeEdgeCheck">Hinge Edge</label>
-                    <input type="checkbox" id="hingeEdgeCheck" />
+                    <input
+                      type="checkbox"
+                      id="hingeEdgeCheck"
+                      onclick="drawDoorset()"
+                    />
                     <label for="lockEdgeCheck">Lock Edge</label>
-                    <input type="checkbox" id="lockEdgeCheck" />
+                    <input
+                      type="checkbox"
+                      id="lockEdgeCheck"
+                      onclick="drawDoorset()"
+                    />
                   </div>
                 </div>
               </div>
